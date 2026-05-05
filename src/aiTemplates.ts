@@ -85,13 +85,13 @@ export const aiReplies = {
 };
 
 // Helper function to get random reply
-export const getAIReply = (category, variables = {}) => {
-  const replies = aiReplies[category] || aiReplies.greeting;
+export const getAIReply = (category: keyof typeof aiReplies, variables = {}) => {
+  const replies: string[] = aiReplies[category] || aiReplies.greeting;
   let reply = replies[Math.floor(Math.random() * replies.length)];
 
   // Replace variables
   Object.entries(variables).forEach(([key, value]) => {
-    reply = reply.replace(new RegExp(`{${key}}`, 'g'), value);
+    reply = reply.replace(new RegExp(`{${key}}`, 'g'), String(value));
   });
 
   return reply;
