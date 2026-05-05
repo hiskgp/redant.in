@@ -1,1 +1,3 @@
-export const templates: string[];
+declare module "aiTemplates" {
+  export const templates: string[];
+}

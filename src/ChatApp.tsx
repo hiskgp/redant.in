@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { checkHealth, getContacts } from './api/client';
-import { getAIReply } from './aiTemplates';
+import { getAIReply } from './aiTemplates.ts';
 
 type Contact = {
   id: number;
