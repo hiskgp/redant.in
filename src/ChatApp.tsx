@@ -106,7 +106,8 @@ export default function ChatApp() {
     setNewMessage('');
 
     setTimeout(() => {
-      let category = 'greeting';
+      // let category = 'greeting';
+            let category: any = 'greeting';
       if (userText.includes('price') || userText.includes('rate') || userText.includes('enna')) category = 'price';
       else if (userText.includes('size') || userText.includes('stock') || userText.includes('irukka')) category = 'size';
       else if (userText.includes('cod') || userText.includes('cash')) category = 'cod';
