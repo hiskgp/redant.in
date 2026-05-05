@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedAnt — WhatsApp Business OS for Indian SMBs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Outfit', system-ui, -apple-system, sans-serif; background: #FFFBF7; }
+        .tamil { font-family: 'Noto Sans Tamil', 'Outfit', sans-serif; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .kolam-bg {
+            background-image: radial-gradient(#FF6B35 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            opacity: 0.04;
+        }
+    </style>
+</head>
+<body class="text-gray-900">
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-[#FF6B35] rounded-full blur-[120px] opacity-[0.12]"></div>
+        <div class="absolute top-1/2 -left-40 w-96 h-96 bg-[#6B46C1] rounded-full blur-[120px] opacity-[0.10]"></div>
+    </div>
+
+    <div class="relative min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 bg-[#FFFBF7]/85 backdrop-blur-xl border-b border-orange-100/70">
+            <div class="max-w-[1600px] mx-auto px-4 lg:px-6">
+                <div class="flex items-center gap-3 lg:gap-6 h-[64px]">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF6B35] to-[#FF8C5A] shadow-[0_4px_12px_rgba(255,107,53,0.25)] flex items-center justify-center">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z" fill="white" opacity="0.95"/></svg>
+                        </div>
+                        <div class="hidden sm:block">
+                            <div class="font-semibold text-[17px] leading-none tracking-tight">RedAnt</div>
+                            <div class="text-[11px] text-gray-500 leading-none mt-0.5">WhatsApp Business OS</div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 flex justify-center">
+                        <div class="w-full max-w-[420px]">
+                            <div class="flex items-center justify-between mb-1 lg:hidden">
+                                <span class="text-[11px] font-medium text-gray-600"><span class="tamil">வணக்கம்</span> Coimbatore!</span>
+                            </div>
+                            <div class="relative bg-[#FFF1E9] p-1 rounded-2xl flex gap-1 shadow-inner">
+                                <button data-business="boutique" class="business-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all bg-white shadow-sm text-[#FF6B35]">
+                                    <span class="text-[16px] leading-none">👗</span>
+                                    <span class="hidden sm:inline">Boutique</span>
+                                </button>
+                                <button data-business="bakery" class="business-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all text-gray-600 hover:text-gray-900">
+                                    <span class="text-[16px] leading-none">🥘</span>
+                                    <span class="hidden sm:inline">Bakery</span>
+                                </button>
+                                <button data-business="salon" class="business-btn flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all text-gray-600 hover:text-gray-900">
+                                    <span class="text-[16px] leading-none">💇</span>
+                                    <span class="hidden sm:inline">Salon</span>
+                                </button>
+                            </div>
+                            <p class="hidden lg:block text-center text-[11px] text-gray-500 mt-1.5">One platform. Auto-adapts to your business.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+                        <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-orange-50 text-gray-600 transition">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+                        </button>
+                        <button class="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-orange-50 text-gray-600 transition">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M15 17h5l-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF6B35] rounded-full ring-2 ring-[#FFFBF7]"></span>
+                        </button>
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6B46C1] to-[#8B5CF6] flex items-center justify-center text-white font-semibold text-[13px] shadow">SR</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 max-w-[1600px] w-full mx-auto px-4 lg:px-6 py-4 lg:py-6 flex gap-6">
+            <!-- Left Sidebar -->
+            <aside class="hidden lg:block w-[220px] shrink-0">
+                <div class="sticky top-[88px] space-y-6">
+                    <div class="bg-white rounded-[24px] p-3 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100">
+                        <div class="px-3 pb-2 pt-1">
+                            <div id="business-name" class="font-semibold">Born Ruler Sarees</div>
+                            <div id="business-location" class="text-[12px] text-gray-500 flex items-center gap-1 mt-0.5">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 21c-4-4-8-7.3-8-11a8 8 0 1 1 16 0c0 3.7-4 7-8 11z"/></svg>
+                                RS Puram, Coimbatore
+                            </div>
+                        </div>
+                        <nav class="space-y-1">
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#FFF1E9] text-[#FF6B35] font-medium">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                <span class="text-[14px]">Dashboard</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span class="text-[14px]"><span class="tamil mr-1">ஆர்டர்கள்</span> Orders</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+                                <span class="text-[14px]">Catalog</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <span class="text-[14px]">Customers</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z" fill="#25D366"/></svg>
+                                <span class="text-[14px]">WhatsApp</span>
+                                <span class="ml-auto text-[11px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-medium">Live</span>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-[#6B46C1] to-[#7C3AED] rounded-[24px] p-[1px] shadow-[0_8px_24px_rgba(107,70,193,0.2)]">
+                        <div class="bg-[#1F1A34] rounded-[23px] p-4 text-white relative overflow-hidden">
+                            <div class="absolute inset-0 kolam-bg"></div>
+                            <div class="relative">
+                                <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center mb-3">✨</div>
+                                <div class="text-[13px] font-medium leading-snug">Coimbatore businesses grow 3x faster on WhatsApp</div>
+                                <div class="text-[12px] text-white/70 mt-1.5">Join 2,400+ local SMBs</div>
+                                <button class="mt-3 w-full bg-white text-[#6B46C1] text-[13px] font-semibold py-2 rounded-xl hover:bg-white/90 transition">Upgrade Pro</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 min-w-0">
+                <div id="dashboard-content" class="transition-all duration-300">
+                    <!-- Welcome Bar -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h1 class="text-[22px] lg:text-[26px] font-semibold leading-tight flex items-center gap-2">
+                                <span class="tamil text-[#FF6B35]">வணக்கம்</span> 
+                                <span id="greeting-name">Priya!</span>
+                            </h1>
+                            <p class="text-[13px] text-gray-600 mt-0.5" id="business-tagline">Premium Kanchipuram Silks • Today is busy</p>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-2">
+                            <button class="px-3.5 py-2 bg-white border border-gray-200 rounded-xl text-[13px] font-medium hover:bg-gray-50 flex items-center gap-1.5">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                                New Order
+                            </button>
+                            <button class="px-3.5 py-2 bg-[#25D366] text-white rounded-xl text-[13px] font-medium hover:bg-[#20bd5a] flex items-center gap-1.5 shadow-[0_4px_12px_rgba(37,211,102,0.3)]">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z"/></svg>
+                                Send Broadcast
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-12 gap-4 lg:gap-6">
+                        <!-- Order Board -->
+                        <div class="lg:col-span-8 xl:col-span-9">
+                            <div class="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-gray-100 p-4 lg:p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="font-semibold text-[16px] flex items-center gap-2">
+                                        Order Board
+                                        <span class="text-[11px] font-normal px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full border border-orange-200">Live</span>
+                                    </h2>
+                                    <div class="flex items-center gap-2 text-[12px] text-gray-500">
+                                        <span class="hidden sm:flex items-center gap-1"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>WhatsApp sync</span>
+                                    </div>
+                                </div>
+
+                                <div id="order-columns" class="flex gap-3 lg:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible">
+                                    <!-- Columns injected by JS -->
+                                </div>
+                            </div>
+
+                            <!-- Catalog -->
+                            <div class="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-gray-100 p-4 lg:p-5 mt-4 lg:mt-6">
+                                <div class="flex items-center justify-between mb-3.5">
+                                    <h2 class="font-semibold text-[16px]">Catalog</h2>
+                                    <button class="text-[12px] text-[#6B46C1] font-medium hover:underline">Manage →</button>
+                                </div>
+                                <div id="catalog-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                    <!-- Catalog injected -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel -->
+                        <div class="lg:col-span-4 xl:col-span-3 space-y-4">
+                            <!-- Today's Stats -->
+                            <div class="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-gray-100 p-5">
+                                <h3 class="font-semibold text-[15px] flex items-center gap-2 mb-4">
+                                    <span class="tamil text-[#FF6B35] text-[18px] leading-none">இன்று</span>
+                                    <span>Today's Snapshot</span>
+                                </h3>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="text-center">
+                                        <div id="stat-orders" class="text-[24px] font-semibold leading-none">24</div>
+                                        <div class="text-[11px] text-gray-500 mt-1.5 leading-tight"><span class="tamil">ஆர்டர்கள்</span><br>Orders</div>
+                                        <div class="mt-1.5 inline-flex items-center gap-0.5 text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>12%
+                                        </div>
+                                    </div>
+                                    <div class="text-center border-x border-gray-100">
+                                        <div id="stat-revenue" class="text-[24px] font-semibold leading-none">₹42.8k</div>
+                                        <div class="text-[11px] text-gray-500 mt-1.5 leading-tight">Revenue<br>வருவாய்</div>
+                                        <div class="mt-1.5 inline-flex items-center gap-0.5 text-[10px] text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full">
+                                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7"/></svg>8%
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div id="stat-pending" class="text-[24px] font-semibold leading-none text-[#FF6B35]">8</div>
+                                        <div class="text-[11px] text-gray-500 mt-1.5 leading-tight">Pending<br>நிலுவை</div>
+                                        <div class="mt-1.5 inline-flex items-center gap-0.5 text-[10px] text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full">3 urgent</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- WhatsApp Live -->
+                            <div class="bg-gradient-to-b from-[#E7F9EF] to-[#F0FDF4] rounded-[28px] border border-green-200/60 p-5 shadow-[0_4px_20px_rgba(37,211,102,0.08)]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-xl bg-[#25D366] flex items-center justify-center shadow-[0_3px_8px_rgba(37,211,102,0.3)]">
+                                            <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z"/></svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-[14px] leading-none">WhatsApp Live</div>
+                                            <div class="text-[11px] text-gray-600">Customer messaged</div>
+                                        </div>
+                                    </div>
+                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                </div>
+
+                                <div id="whatsapp-feed" class="space-y-2.5">
+                                    <!-- Messages injected -->
+                                </div>
+
+                                <button class="mt-3.5 w-full bg-white/70 backdrop-blur hover:bg-white border border-green-200 text-[13px] font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 text-gray-800">
+                                    Open WhatsApp Inbox
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+                                </button>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-white rounded-[28px] shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-gray-100 p-5">
+                                <h3 class="font-semibold text-[14px] mb-3">Quick Actions</h3>
+                                <div class="grid grid-cols-2 gap-2.5">
+                                    <button class="p-3 rounded-2xl bg-[#FFF6F1] hover:bg-[#FFEEE3] text-left transition group">
+                                        <div class="w-8 h-8 rounded-xl bg-[#FF6B35] text-white flex items-center justify-center mb-2 group-hover:scale-105 transition">₹</div>
+                                        <div class="text-[13px] font-medium leading-tight">Payment Link</div>
+                                        <div class="text-[11px] text-gray-500">UPI / Card</div>
+                                    </button>
+                                    <button class="p-3 rounded-2xl bg-[#F5F3FF] hover:bg-[#EDE9FE] text-left transition group">
+                                        <div class="w-8 h-8 rounded-xl bg-[#6B46C1] text-white flex items-center justify-center mb-2 group-hover:scale-105 transition">
+                                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                        </div>
+                                        <div class="text-[13px] font-medium leading-tight">Share Catalog</div>
+                                        <div class="text-[11px] text-gray-500">On WhatsApp</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-xl border-t border-gray-200 pb-safe">
+            <div class="grid grid-cols-5 h-[68px] max-w-[500px] mx-auto">
+                <a class="flex flex-col items-center justify-center gap-1 text-[#FF6B35]">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="text-[10px] font-medium">Home</span>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span class="text-[10px]">Orders</span>
+                </a>
+                <a class="flex flex-col items-center justify-center">
+                    <div class="w-12 h-12 -mt-3 rounded-2xl bg-gradient-to-br from-[#FF6B35] to-[#FF8C5A] flex items-center justify-center text-white shadow-[0_6px_16px_rgba(255,107,53,0.35)]">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+                    <span class="text-[10px]">Catalog</span>
+                </a>
+                <a class="flex flex-col items-center justify-center gap-1 text-gray-500">
+                    <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z" fill="#25D366"/></svg>
+                    <span class="text-[10px]">WhatsApp</span>
+                </a>
+            </div>
+        </nav>
+        <div class="lg:hidden h-[68px]"></div>
+    </div>
+
+    <!-- WhatsApp Toast -->
+    <div id="wa-toast" class="fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 translate-y-20 opacity-0 transition-all duration-500 pointer-events-none">
+        <div class="bg-[#1F2937] text-white rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.25)] pl-3 pr-4 py-3 flex items-center gap-3 max-w-[320px]">
+            <div class="w-10 h-10 rounded-xl bg-[#25D366] flex items-center justify-center shrink-0">
+                <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z"/></svg>
+            </div>
+            <div class="min-w-0">
+                <div class="text-[13px] font-medium leading-tight" id="toast-name">பிரியா messaged</div>
+                <div class="text-[12px] text-white/75 truncate" id="toast-text">Maroon silk saree available ah?</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const businesses = {
+            boutique: {
+                name: "Born Ruler Sarees",
+                location: "RS Puram, Coimbatore",
+                tagline: "Premium Kanchipuram Silks • Today is busy",
+                greeting: "Priya!",
+                columns: ["New", "Confirmed", "Packed", "Delivered"],
+                tamilColumns: ["புதியது", "உறுதி", "பேக்", "டெலிவரி"],
+                orders: [
+                    {id:"BR2045", customer:"பிரியா R.", item:"Kanchipuram Silk Saree - Maroon", price:4850, time:"10:23 AM", status:0, avatar:"PR", whatsapp:true},
+                    {id:"BR2044", customer:"மீனா V.", item:"Cotton Kurti Set - Blue", price:1250, time:"9:47 AM", status:0, avatar:"MV", whatsapp:true},
+                    {id:"BR2043", customer:"கார்த்திக் S.", item:"Designer Blouse (Gift)", price:890, time:"Yesterday", status:1, avatar:"KS", whatsapp:false},
+                    {id:"BR2042", customer:"லட்சுமி M.", item:"Banarasi Soft Silk - Green", price:3200, time:"Yesterday", status:2, avatar:"LM", whatsapp:true},
+                    {id:"BR2041", customer:"அர்ஜுன் K.", item:"Wedding Pattu Saree", price:12500, time:"2d ago", status:3, avatar:"AK", whatsapp:false},
+                    {id:"BR2040", customer:"திவ்யா P.", item:"Linen Saree - Beige", price:2650, time:"2d ago", status:3, avatar:"DP", whatsapp:true},
+                ],
+                catalog: [
+                    {name:"Kanchipuram Silk", price:4850, stock:12, img:"https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80&auto=format", tag:"Bestseller"},
+                    {name:"Cotton Kurti Set", price:1250, stock:28, img:"https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80&auto=format", tag:"New"},
+                    {name:"Banarasi Saree", price:3200, stock:7, img:"https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&q=80&auto=format", tag:""},
+                    {name:"Designer Blouse", price:890, stock:45, img:"https://images.unsplash.com/photo-1585487000160-6ebcfcec04db?w=400&q=80&auto=format", tag:""},
+                ],
+                stats:{orders:24, revenue:42850, pending:8},
+                whatsapp: [
+                    {name:"பிரியா", text:"Maroon silk saree available ah akka?", time:"2m"},
+                    {name:"மீனா", text:"Kurti size exchange possible?", time:"5m"},
+                    {name:"லட்சுமி", text:"Delivery tomorrow to Saibaba Colony?", time:"12m"},
+                ]
+            },
+            bakery: {
+                name: "Annapoorna Tiffin",
+                location: "Gandhipuram, Coimbatore",
+                tagline: "Fresh South Indian • 67 orders today",
+                greeting: "Suresh!",
+                columns: ["New", "Cooking", "Ready", "Delivered"],
+                tamilColumns: ["புதியது","சமையல்","ரெடி","டெலிவரி"],
+                orders: [
+                    {id:"AT7123", customer:"சுரேஷ் P.", item:"4 Idli, 2 Dosa, Chutney", price:180, time:"11:42 AM", status:0, avatar:"SP", whatsapp:true},
+                    {id:"AT7122", customer:"தீபா A.", item:"Veg Biryani Family Pack", price:420, time:"11:38 AM", status:0, avatar:"DA", whatsapp:true},
+                    {id:"AT7121", customer:"விஜய் R.", item:"10 Idli Parcel", price:250, time:"11:15 AM", status:1, avatar:"VR", whatsapp:false},
+                    {id:"AT7120", customer:"கவிதா S.", item:"Ghee Dosa x2, Coffee", price:160, time:"11:02 AM", status:2, avatar:"KS", whatsapp:true},
+                    {id:"AT7119", customer:"மோகன் K.", item:"Full Meals x2", price:280, time:"10:45 AM", status:3, avatar:"MK", whatsapp:false},
+                    {id:"AT7118", customer:"பிரியா L.", item:"Pongal, Vada, Sambar", price:140, time:"10:30 AM", status:3, avatar:"PL", whatsapp:true},
+                ],
+                catalog: [
+                    {name:"Idli (4 pcs)", price:60, stock:120, img:"https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80&auto=format", tag:"Hot"},
+                    {name:"Ghee Dosa", price:80, stock:85, img:"https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&q=80&auto=format", tag:""},
+                    {name:"Veg Biryani", price:220, stock:34, img:"https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&q=80&auto=format", tag:"Bestseller"},
+                    {name:"Filter Coffee", price:40, stock:200, img:"https://images.unsplash.com/photo-1509785307050-d4066910ec1e?w=400&q=80&auto=format", tag:""},
+                ],
+                stats:{orders:67, revenue:12480, pending:14},
+                whatsapp: [
+                    {name:"சுரேஷ்", text:"Idli sutta irukka? 15 mins la?", time:"1m"},
+                    {name:"தீபா", text:"RS Puram delivery unda?", time:"3m"},
+                    {name:"கவிதா", text:"Biryani ready aayiducha?", time:"8m"},
+                ]
+            },
+            salon: {
+                name: "Lakme Beauty Studio",
+                location: "Saibaba Colony, Coimbatore",
+                tagline: "Bridal & Everyday • 5 slots left today",
+                greeting: "Anitha!",
+                columns: ["New", "Confirmed", "In Progress", "Completed"],
+                tamilColumns: ["புதியது","உறுதி","நடக்கிறது","முடிந்தது"],
+                orders: [
+                    {id:"LB3401", customer:"அனிதா J.", item:"Haircut + Blowdry", price:650, time:"12:00 PM", status:0, avatar:"AJ", whatsapp:true},
+                    {id:"LB3400", customer:"பிரியா D.", item:"Bridal Facial", price:1500, time:"11:55 AM", status:0, avatar:"PD", whatsapp:true},
+                    {id:"LB3399", customer:"சந்தியா M.", item:"Hair Spa - L'Oreal", price:900, time:"Today", status:1, avatar:"SM", whatsapp:false},
+                    {id:"LB3398", customer:"திவ்யா R.", item:"Keratin Treatment", price:3500, time:"10:30 AM", status:2, avatar:"DR", whatsapp:true},
+                    {id:"LB3397", customer:"ரேவதி S.", item:"Threading & Cleanup", price:350, time:"9:45 AM", status:3, avatar:"RS", whatsapp:false},
+                    {id:"LB3396", customer:"கவிதா P.", item:"Pedicure Deluxe", price:500, time:"Yesterday", status:3, avatar:"KP", whatsapp:true},
+                ],
+                catalog: [
+                    {name:"Haircut - Women", price:400, stock:0, img:"https://images.unsplash.com/photo-1560869713-7d0a29430803?w=400&q=80&auto=format", tag:""},
+                    {name:"Bridal Facial", price:1500, stock:0, img:"https://images.unsplash.com/photo-1552693673-1bf9582984e7?w=400&q=80&auto=format", tag:"Popular"},
+                    {name:"Hair Spa", price:900, stock:0, img:"https://images.unsplash.com/photo-1519735777090-ec97162dc266?w=400&q=80&auto=format", tag:""},
+                    {name:"Keratin", price:3500, stock:0, img:"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80&auto=format", tag:"Premium"},
+                ],
+                stats:{orders:18, revenue:28600, pending:5},
+                whatsapp: [
+                    {name:"அனிதா", text:"Facial ku appointment evening 5pm?", time:"4m"},
+                    {name:"பிரியா", text:"Bridal package details please", time:"7m"},
+                    {name:"திவ்யா", text:"Keratin after-care products irukka?", time:"15m"},
+                ]
+            }
+        };
+
+        let currentBusiness = 'boutique';
+        let waIndex = 0;
+
+        function formatINR(num) {
+            if (num >= 1000) return '₹' + (num/1000).toFixed(1) + 'k';
+            return '₹' + num.toLocaleString('en-IN');
+        }
+
+        function switchBusiness(type) {
+            if (type === currentBusiness) return;
+            currentBusiness = type;
+            
+            document.querySelectorAll('.business-btn').forEach(btn => {
+                const isActive = btn.dataset.business === type;
+                btn.classList.toggle('bg-white', isActive);
+                btn.classList.toggle('shadow-sm', isActive);
+                btn.classList.toggle('text-[#FF6B35]', isActive);
+                btn.classList.toggle('text-gray-600', !isActive);
+            });
+
+            const content = document.getElementById('dashboard-content');
+            content.style.opacity = '0';
+            content.style.transform = 'translateY(8px)';
+            
+            setTimeout(() => {
+                renderAll();
+                content.style.opacity = '1';
+                content.style.transform = 'translateY(0)';
+                
+                // Show toast
+                const biz = businesses[type];
+                showToast(biz.name + ' loaded', 'Switched to ' + biz.location);
+            }, 180);
+        }
+
+        function renderAll() {
+            const biz = businesses[currentBusiness];
+            
+            document.getElementById('business-name').textContent = biz.name;
+            document.getElementById('business-location').innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 21c-4-4-8-7.3-8-11a8 8 0 1 1 16 0c0 3.7-4 7-8 11z"/></svg> ${biz.location}`;
+            document.getElementById('business-tagline').textContent = biz.tagline;
+            document.getElementById('greeting-name').textContent = biz.greeting;
+            
+            // Stats
+            document.getElementById('stat-orders').textContent = biz.stats.orders;
+            document.getElementById('stat-revenue').textContent = formatINR(biz.stats.revenue);
+            document.getElementById('stat-pending').textContent = biz.stats.pending;
+
+            // Orders
+            const columnsEl = document.getElementById('order-columns');
+            columnsEl.innerHTML = '';
+            
+            biz.columns.forEach((colName, colIdx) => {
+                const ordersInCol = biz.orders.filter(o => o.status === colIdx);
+                const col = document.createElement('div');
+                col.className = 'min-w-[270px] lg:min-w-0 lg:flex-1 snap-start';
+                col.innerHTML = `
+                    <div class="flex items-center justify-between mb-2.5">
+                        <h3 class="font-medium text-[13.5px] text-gray-800 flex items-center gap-1.5">
+                            ${colName}
+                            <span class="tamil text-[11px] text-gray-400 font-normal">${biz.tamilColumns[colIdx]}</span>
+                        </h3>
+                        <span class="text-[11px] px-2 py-0.5 rounded-full font-medium ${ordersInCol.length ? 'bg-[#FFF1E9] text-[#FF6B35]' : 'bg-gray-100 text-gray-500'}">${ordersInCol.length}</span>
+                    </div>
+                    <div class="space-y-2.5 min-h-[120px]">
+                        ${ordersInCol.map(order => `
+                            <div onclick="advanceOrder('${order.id}')" class="group bg-[#FFFCFA] hover:bg-white border border-orange-100/70 hover:border-orange-200 rounded-2xl p-3 cursor-pointer transition-all hover:shadow-[0_6px_16px_rgba(255,107,53,0.08)] hover:-translate-y-[1px]">
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-8.5 h-8.5 rounded-xl bg-gradient-to-br from-orange-100 to-purple-100 flex items-center justify-center text-[11px] font-semibold text-gray-700 shrink-0 mt-0.5">${order.avatar}</div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-1">
+                                            <p class="font-medium text-[13.5px] truncate text-gray-900">${order.customer}</p>
+                                            ${order.whatsapp ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M12 2C6.5 2 2 6.2 2 11.3c0 2.3.9 4.4 2.4 6L3 21l4-1.3c1.3.7 2.8 1.1 4.4 1.1 5.5 0 10-4.2 10-9.3S17.5 2 12 2z"/></svg>` : ''}
+                                        </div>
+                                        <p class="text-[12.5px] text-gray-600 truncate mt-0.5 leading-snug">${order.item}</p>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-[13px] font-semibold">₹${order.price.toLocaleString('en-IN')}</span>
+                                            <span class="text-[11px] text-gray-500">${order.time}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-orange-100/60">
+                                    <span class="text-[10.5px] text-gray-500 font-mono">${order.id}</span>
+                                    <span class="text-[11px] text-[#FF6B35] font-medium opacity-0 group-hover:opacity-100 transition">Move →</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${ordersInCol.length === 0 ? `<div class="h-[80px] rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-[12px] text-gray-400 bg-gray-50/50">No orders</div>` : ''}
+                    </div>
+                `;
+                columnsEl.appendChild(col);
+            });
+
+            // Catalog
+            const catalogEl = document.getElementById('catalog-grid');
+            catalogEl.innerHTML = biz.catalog.map(item => `
+                <div class="group bg-[#FFFCFA] border border-orange-100/70 rounded-[20px] overflow-hidden hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all hover:-translate-y-0.5">
+                    <div class="aspect-[4/3] relative overflow-hidden bg-gray-100">
+                        <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        ${item.tag ? `<span class="absolute top-2 left-2 text-[10px] px-2 py-1 rounded-full bg-white/90 backdrop-blur font-medium shadow-sm">${item.tag}</span>` : ''}
+                    </div>
+                    <div class="p-3">
+                        <p class="font-medium text-[13.5px] truncate">${item.name}</p>
+                        <div class="flex items-center justify-between mt-1.5">
+                            <span class="font-semibold text-[14px]">₹${item.price.toLocaleString('en-IN')}</span>
+                            <span class="text-[11px] text-gray-500">${item.stock ? item.stock + ' left' : 'Service'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // WhatsApp
+            renderWhatsApp();
+        }
+
+        function renderWhatsApp() {
+            const biz = businesses[currentBusiness];
+            const feed = document.getElementById('whatsapp-feed');
+            feed.innerHTML = biz.whatsapp.map(msg => `
+                <div class="bg-white rounded-2xl p-3 border border-green-100 shadow-sm">
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-[11px] font-semibold text-green-800 shrink-0">${msg.name.charAt(0)}</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="font-medium text-[13px]">${msg.name}</span>
+                                <span class="text-[10px] text-gray-500">${msg.time}</span>
+                            </div>
+                            <p class="text-[13px] text-gray-700 mt-0.5 leading-snug">${msg.text}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function advanceOrder(id) {
+            const biz = businesses[currentBusiness];
+            const order = biz.orders.find(o => o.id === id);
+            if (order && order.status < 3) {
+                order.status++;
+                renderAll();
+                
+                if (order.status === 3) {
+                    showToast('Order completed!', `${order.customer} • ₹${order.price.toLocaleString('en-IN')}`);
+                }
+            }
+        }
+
+        function showToast(title, text) {
+            const toast = document.getElementById('wa-toast');
+            document.getElementById('toast-name').textContent = title;
+            document.getElementById('toast-text').textContent = text;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3200);
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.business-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchBusiness(btn.dataset.business));
+            });
+            
+            renderAll();
+
+            // Rotate WhatsApp messages
+            setInterval(() => {
+                waIndex = (waIndex + 1) % 3;
+                const biz = businesses[currentBusiness];
+                const msg = biz.whatsapp[waIndex % biz.whatsapp.length];
+                if (msg && Math.random() > 0.3) {
+                    showToast(msg.name + ' messaged', msg.text);
+                }
+            }, 8000);
+
+            // Initial demo toast
+            setTimeout(() => {
+                showToast('பிரியா messaged on WhatsApp', 'Maroon silk saree available ah akka?');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

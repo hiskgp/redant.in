@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatSprout Admin — Leads Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>*{font-family:'Inter',sans-serif}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}</style>
+</head>
+<body class="bg-[#030711] text-slate-200 antialiased">
+  <div class="pointer-events-none fixed inset-0 -z-10"><div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(5,150,105,0.15),transparent_60%)]"></div></div>
+
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-950/70 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 h-[68px] flex items-center justify-between">
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-white"><path d="M12 2a1 1 0 0 1 1 1v3.055A6.98 0 0 1 18.945 12H22a1 1 0 1 1 0 2h-3.055A6.98 6.98 0 0 1 13 19.945V23a1 1 0 1 1-2 0v-3.055A6.98 0 0 1 5.055 14H2a1 1 0 1 1 0-2h3.055A6.98 0 0 1 11 6.055V3a1 1 0 0 1 1-1z" fill="currentColor" opacity="0.9"/></svg></div>
+        <div><h1 class="text-[17px] font-semibold">ChatSprout Admin</h1><p class="text-[12px] text-slate-400 -mt-0.5">Leads Dashboard</p></div>
+      </div>
+      <div class="flex items-center gap-2.5 bg-slate-900/80 border border-slate-800 px-3.5 py-2 rounded-xl">
+        <span class="relative flex h-2 w-2"><span class="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative h-2 w-2 bg-emerald-500 rounded-full"></span></span>
+        <span class="text-xs text-slate-400 hidden sm:inline">Total Leads</span>
+        <span id="totalCount" class="text-sm font-semibold">0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-3 mb-5">
+      <div class="relative flex-1">
+        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="searchInput" type="text" placeholder="Search by name, phone, city..." class="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-10 pr-4 h-[44px] text-sm outline-none focus:ring-2 focus:ring-emerald-600/20" />
+      </div>
+      <div class="flex gap-2">
+        <button id="refreshBtn" class="h-[44px] px-4 bg-slate-900 border border-slate-800 rounded-xl text-sm flex items-center gap-2 hover:bg-slate-800">Refresh</button>
+        <button id="exportBtn" class="h-[44px] px-4 bg-emerald-600 rounded-xl text-sm text-white flex items-center gap-2 hover:bg-emerald-500">Export CSV</button>
+        <button id="clearBtn" class="h-[44px] px-4 bg-slate-900/60 border border-slate-800 rounded-xl text-sm text-slate-400 hover:text-red-400">Clear</button>
+      </div>
+    </div>
+
+    <div class="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead><tr class="border-b border-slate-800 bg-slate-950/50">
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">#</th>
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">Name</th>
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">Phone</th>
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">Business</th>
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">City</th>
+            <th class="text-left px-5 py-3 text-[11px] text-slate-400 uppercase">Date</th>
+          </tr></thead>
+          <tbody id="leadsTable" class="divide-y divide-slate-800/50"></tbody>
+        </table>
+        <div id="emptyState" class="hidden py-16 text-center"><p class="text-slate-500">No leads yet. Share your landing page!</p></div>
+      </div>
+    </div>
+  </main>
+
+<script>
+const KEY='chatsprout_leads'; let leads=[];
+function load(){ leads=JSON.parse(localStorage.getItem(KEY)||'[]'); document.getElementById('totalCount').textContent=leads.length; render(); }
+function render(){ const q=document.getElementById('searchInput').value.toLowerCase(); const f=leads.filter(l=>(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q)); const tb=document.getElementById('leadsTable'); tb.innerHTML=''; document.getElementById('emptyState').classList.toggle('hidden',f.length>0); f.slice().reverse().forEach((l,i)=>{ const d=l.ts?new Date(l.ts):new Date(); const phone=(l.phone||'').replace(/\D/g,''); tb.innerHTML+=`<tr class="hover:bg-slate-800/30"><td class="px-5 py-3 text-sm text-slate-500">${i+1}</td><td class="px-5 py-3 font-medium">${l.name||'-'}</td><td class="px-5 py-3"><a href="https://wa.me/91${phone}" target="_blank" class="text-emerald-400 hover:underline">${l.phone||'-'}</a></td><td class="px-5 py-3 text-sm">${l.type||l.businessType||'-'}</td><td class="px-5 py-3 text-sm">${l.city||'-'}</td><td class="px-5 py-3 text-sm text-slate-400">${d.toLocaleDateString('en-IN')}</td></tr>`; }); }
+function exportCSV(){ if(!leads.length)return alert('No leads'); const csv=['Name,Phone,Business,City,Date',...leads.map(l=>`"${l.name}","${l.phone}","${l.type||''}","${l.city||''}","${new Date(l.ts).toLocaleString('en-IN')}"`)].join('\n'); const b=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='chatsprout-leads.csv'; a.click(); }
+document.getElementById('searchInput').oninput=render;
+document.getElementById('refreshBtn').onclick=load;
+document.getElementById('exportBtn').onclick=exportCSV;
+document.getElementById('clearBtn').onclick=()=>{ if(confirm('Delete all?')){localStorage.removeItem(KEY);load();} };
+load(); setInterval(load,5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatSprout Diagnostic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { scrollbar-width: thin; scrollbar-color: #d1d5db #f9fafb; }
+    *::-webkit-scrollbar { width: 6px; height: 6px; }
+    *::-webkit-scrollbar-track { background: #f9fafb; }
+    *::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#fcfcfc] min-h-screen text-gray-900">
+  <div class="max-w-6xl mx-auto px-4 py-6 md:py-10">
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-[30px] leading-tight font-semibold tracking-tight">Vanakkam Priya</h1>
+        <p class="text-gray-500 mt-1">ChatSprout Diagnostic Dashboard</p>
+      </div>
+      <button id="test-btn" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-black text-white rounded-xl font-medium text-sm transition shadow-sm active:scale-[0.98]">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Test Insert Order
+      </button>
+    </header>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-emerald-500 to-green-500"></div>
+        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</p>
+        <p id="stat-total" class="text-3xl font-semibold mt-3 tabular-nums">…</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-emerald-500 to-green-500"></div>
+        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Today's Revenue</p>
+        <p id="stat-revenue" class="text-3xl font-semibold mt-3 tabular-nums">…</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden">
+        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-emerald-500 to-green-500"></div>
+        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Active Products</p>
+        <p id="stat-products" class="text-3xl font-semibold mt-3 tabular-nums">…</p>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="mb-6 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-500">
+      <div class="flex items-start gap-3">
+        <div class="mt-0.5 w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></div>
+        <p class="text-sm text-gray-700 font-mono leading-relaxed whitespace-pre-wrap break-words">Initializing...</p>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Products -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="font-semibold text-gray-900">Products</h2>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-green-50 text-green-700 font-medium">Live</span>
+        </div>
+        <div id="products" class="p-4 space-y-2.5 overflow-auto max-h-[460px] min-h-[200px]">
+          <div class="animate-pulse space-y-2.5">
+            <div class="h-16 bg-gray-50 rounded-xl"></div>
+            <div class="h-16 bg-gray-50 rounded-xl"></div>
+            <div class="h-16 bg-gray-50 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="font-semibold text-gray-900">Recent Orders</h2>
+          <span class="text-xs text-gray-500">Last 20</span>
+        </div>
+        <div id="orders" class="p-4 space-y-2.5 overflow-auto max-h-[460px] min-h-[200px]">
+          <div class="animate-pulse space-y-2.5">
+            <div class="h-20 bg-gray-50 rounded-xl"></div>
+            <div class="h-20 bg-gray-50 rounded-xl"></div>
+            <div class="h-20 bg-gray-50 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-10">ChatSprout • Supabase REST • zz kw ux zp uh vw cg ue ey iw</p>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://zzkwuxzpuhvwcgueeyiw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6a3d1eHpwdWh2d2NndWVleWl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwOTA1MTAsImV4cCI6MjA5MjY2NjUxMH0.H1fXjwVry0-ZDAdpSsBhR7B72t9Sq-Xopf_ZxLloaA0';
+const HEADERS = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type': 'application/json'
+};
+
+let productsData = [];
+
+function setStatus(message, state = 'loading') {
+  const el = document.getElementById('status');
+  const colors = {
+    loading: { border: 'border-l-amber-500', dot: 'bg-amber-500 animate-pulse', text: 'text-amber-700' },
+    success: { border: 'border-l-green-500', dot: 'bg-green-500', text: 'text-green-700' },
+    error: { border: 'border-l-red-500', dot: 'bg-red-500', text: 'text-red-700' },
+    info: { border: 'border-l-gray-400', dot: 'bg-gray-400', text: 'text-gray-700' }
+  };
+  const c = colors[state] || colors.loading;
+  el.className = `mb-6 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm border-l-4 ${c.border}`;
+  el.innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="mt-1 w-2 h-2 rounded-full ${c.dot} shrink-0"></div>
+      <p class="text-sm font-mono leading-relaxed whitespace-pre-wrap break-words ${c.text}">${escapeHtml(message)}</p>
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+async function loadProducts() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers: HEADERS });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}\n${text}`);
+    const data = JSON.parse(text || '[]');
+    productsData = data;
+    
+    document.getElementById('stat-products').textContent = data.filter(p => p.is_active !== false).length;
+    renderProducts(data);
+    setStatus('✓ Connected - products loaded', 'success');
+    return true;
+  } catch (err) {
+    document.getElementById('products').innerHTML = `<div class="text-center py-12 text-red-600 text-sm">Failed to load products</div>`;
+    document.getElementById('stat-products').textContent = '0';
+    setStatus(`Products fetch failed:\n${err.message}`, 'error');
+    return false;
+  }
+}
+
+async function loadOrders() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*,products(name,price)&order=created_at.desc&limit=20`, { headers: HEADERS });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}\n${text}`);
+    const data = JSON.parse(text || '[]');
+    
+    renderOrders(data);
+    
+    // Update status to include orders
+    const statusEl = document.getElementById('status').querySelector('p');
+    if (statusEl && statusEl.textContent.includes('products loaded')) {
+      setStatus('✓ Connected - products loaded · orders loaded', 'success');
+    }
+  } catch (err) {
+    document.getElementById('orders').innerHTML = `<div class="text-center py-12 text-red-600 text-sm">Failed to load orders</div>`;
+    document.getElementById('stat-total').textContent = '0';
+    document.getElementById('stat-revenue').textContent = '₹0';
+    setStatus(`Orders fetch failed:\n${err.message}`, 'error');
+  }
+}
+
+function renderProducts(products) {
+  const el = document.getElementById('products');
+  if (!products.length) {
+    el.innerHTML = `<div class="text-center py-12 text-gray-500 text-sm">No products found</div>`;
+    return;
+  }
+  el.innerHTML = products.map(p => `
+    <div class="group flex items-center justify-between p-3.5 bg-gray-50/70 hover:bg-gray-50 rounded-xl transition border border-transparent hover:border-gray-200">
+      <div class="min-w-0">
+        <p class="font-medium text-gray-900 truncate">${escapeHtml(p.name || 'Unnamed Product')}</p>
+        <p class="text-xs text-gray-500 mt-1 font-mono">id: ${p.id}</p>
+      </div>
+      <div class="text-right shrink-0 ml-3">
+        <p class="font-semibold text-gray-900">₹${Number(p.price || 0).toLocaleString('en-IN')}</p>
+        <div class="flex items-center justify-end gap-1.5 mt-1">
+          <span class="w-1.5 h-1.5 rounded-full ${p.is_active !== false ? 'bg-green-500' : 'bg-gray-300'}"></span>
+          <span class="text-[11px] ${p.is_active !== false ? 'text-green-700' : 'text-gray-500'} uppercase tracking-wide font-medium">${p.is_active !== false ? 'Active' : 'Inactive'}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderOrders(orders) {
+  const el = document.getElementById('orders');
+  document.getElementById('stat-total').textContent = orders.length.toLocaleString('en-IN');
+  
+  const today = new Date().toDateString();
+  const todayRevenue = orders
+    .filter(o => new Date(o.created_at).toDateString() === today)
+    .reduce((sum, o) => sum + Number(o.products?.price || 0), 0);
+  document.getElementById('stat-revenue').textContent = '₹' + todayRevenue.toLocaleString('en-IN');
+
+  if (!orders.length) {
+    el.innerHTML = `<div class="text-center py-12 text-gray-500 text-sm">No orders yet</div>`;
+    return;
+  }
+  
+  el.innerHTML = orders.map(o => {
+    const date = new Date(o.created_at);
+    const status = (o.status || 'new').toLowerCase();
+    const statusMap = {
+      new: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
+      completed: 'bg-green-50 text-green-700 ring-1 ring-green-200',
+      paid: 'bg-green-50 text-green-700 ring-1 ring-green-200',
+      pending: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
+      cancelled: 'bg-red-50 text-red-700 ring-1 ring-red-200'
+    };
+    const statusClass = statusMap[status] || 'bg-gray-50 text-gray-700 ring-1 ring-gray-200';
+    
+    return `
+      <div class="p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-white">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-gray-900">${escapeHtml(o.customer_phone || 'No phone')}</p>
+            <p class="text-sm text-gray-600 mt-1 truncate">${escapeHtml(o.products?.name || 'Unknown Product')}</p>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-[11px] font-medium ${statusClass} shrink-0 uppercase tracking-wide">${escapeHtml(o.status || 'new')}</span>
+        </div>
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
+          <span class="text-sm font-semibold text-gray-900">₹${Number(o.products?.price || 0).toLocaleString('en-IN')}</span>
+          <span class="text-xs text-gray-500 font-mono">${date.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function testInsert() {
+  const btn = document.getElementById('test-btn');
+  if (!productsData.length) {
+    setStatus('✗ Cannot insert: No products available. Load products first.', 'error');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.classList.add('opacity-60');
+  setStatus('Inserting test order...', 'loading');
+  
+  try {
+    const body = {
+      customer_phone: "+919876543210",
+      product_id: productsData[0].id,
+      status: "new"
+    };
+    
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method: 'POST',
+      headers: { ...HEADERS, 'Prefer': 'return=representation' },
+      body: JSON.stringify(body)
+    });
+    
+    const text = await res.text();
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}\n${text}`);
+    
+    const data = JSON.parse(text);
+    setStatus(`✓ Test order inserted\nOrder ID: ${data[0]?.id}\nProduct: ${productsData[0].name} (₹${productsData[0].price})\nPhone: +919876543210`, 'success');
+    
+    await loadOrders();
+  } catch (err) {
+    setStatus(`Insert failed:\n${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('opacity-60');
+  }
+}
+
+async function init() {
+  setStatus('Connecting to Supabase...', 'loading');
+  await loadProducts();
+  await loadOrders();
+}
+
+document.getElementById('test-btn').addEventListener('click', testInsert);
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

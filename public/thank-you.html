@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're on the list — ChatSprout</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+  :root { color-scheme: dark; }
+  * { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  html, body { background: #030308; overscroll-behavior: none; }
+  ::selection { background: rgba(139, 92, 246, 0.3); color: white; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  
+  .fade-in { opacity: 0; transform: translateY(12px); animation: fadeIn 0.8s cubic-bezier(0.21,0.61,0.35,1) forwards; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  
+  .checkmark-circle { stroke-dasharray: 280; stroke-dashoffset: 280; animation: draw 1s ease-out 0.3s forwards; }
+  .checkmark-check { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw 0.5s ease-out 1s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  
+  .orb { filter: blur(80px); will-change: transform; animation: float 20s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(20px,-30px) scale(1.05); } 66% { transform: translate(-25px,20px) scale(0.95); } }
+  
+  .shimmer { position: relative; overflow: hidden; }
+  .shimmer::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%); transform: translateX(-100%); animation: shimmer 3s ease-in-out infinite; }
+  @keyframes shimmer { 100% { transform: translateX(200%); } }
+</style>
+</head>
+<body class="antialiased text-white selection:bg-violet-500/30">
+<div class="relative min-h-screen w-full overflow-hidden">
+  <!-- Background -->
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute inset-0 bg-[#030308]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,80,220,0.25),transparent)]"></div>
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px); background-size: 64px 64px;"></div>
+    <div class="orb absolute -top-32 -left-40 w-[520px] h-[520px] rounded-full bg-violet-600/20"></div>
+    <div class="orb absolute top-[20%] -right-48 w-[460px] h-[460px] rounded-full bg-blue-600/20" style="animation-delay: -7s;"></div>
+    <div class="orb absolute -bottom-40 left-[20%] w-[380px] h-[380px] rounded-full bg-indigo-600/15" style="animation-delay: -12s;"></div>
+  </div>
+
+  <main class="relative z-10 mx-auto max-w-[560px] px-6 py-10 sm:py-16">
+    <!-- Logo -->
+    <div class="flex justify-center mb-12 fade-in">
+      <a href="#" class="group flex items-center gap-2.5">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-gradient-to-b from-violet-600 to-blue-600 rounded-xl blur-md opacity-50 group-hover:opacity-80 transition"></div>
+          <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center shadow-lg shadow-violet-600/20">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.48 2 2 5.8 2 10.5c0 1.85.7 3.55 1.89 4.93-.11.53-.7 2.41-2.27 3.74.02.01 2.76-.16 4.64-1.14A9.86 9.86 0 0 0 12 19c5.52 0 10-3.8 10-8.5S17.52 2 12 2Z" fill="white"/>
+              <path d="M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01" stroke="black" stroke-opacity=".2" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <span class="text-[18px] font-semibold tracking-tight">chatsprout</span>
+      </a>
+    </div>
+
+    <!-- Success -->
+    <div class="flex justify-center mb-8 fade-in delay-1">
+      <div class="relative">
+        <div class="absolute -inset-8 bg-gradient-to-b from-violet-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="relative">
+          <div class="absolute inset-0 rounded-full bg-[#25D366]/20 blur-2xl"></div>
+          <div class="relative w-[104px] h-[104px] sm:w-[120px] sm:h-[120px]">
+            <svg viewBox="0 0 120 120" class="w-full h-full">
+              <defs>
+                <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#8b5cf6"/>
+                  <stop offset="50%" stop-color="#6366f1"/>
+                  <stop offset="100%" stop-color="#3b82f6"/>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <circle cx="60" cy="60" r="54" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="url(#ring)" stroke-width="2.5" stroke-linecap="round" class="checkmark-circle" transform="rotate(-90 60 60)" filter="url(#glow)"/>
+              <path d="M42 61 L54 72 L78 48" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-check"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <div class="text-center mb-10">
+      <h1 class="text-[34px] leading-[1.1] sm:text-[44px] font-[650] tracking-[-0.02em] mb-3 fade-in delay-2">
+        You're on the list! 
+        <span class="inline-block animate-[wiggle_2s_ease-in-out_infinite]">🎉</span>
+      </h1>
+      <p class="text-[16px] sm:text-[17px] leading-relaxed text-zinc-400 max-w-[420px] mx-auto fade-in delay-2">
+        Thanks for joining the ChatSprout waitlist. We're crafting WhatsApp automation that just works.
+      </p>
+    </div>
+
+    <!-- Waitlist Card -->
+    <div class="relative group mb-8 fade-in delay-3">
+      <div class="absolute -inset-px rounded-[28px] bg-gradient-to-b from-violet-500/20 via-blue-500/20 to-transparent opacity-70 blur-2xl group-hover:opacity-100 transition-opacity duration-700"></div>
+      <div class="relative overflow-hidden rounded-[26px] bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_20px_60px_-15px_rgba(0,0,0,0.8)]">
+        <div class="absolute inset-0 bg-gradient-to-b from-white/[0.07] to-transparent h-px"></div>
+        <div class="p-[1px]">
+          <div class="rounded-[25px] bg-gradient-to-b from-zinc-900/50 to-zinc-950/80 p-6 sm:p-7">
+            <div class="flex items-start justify-between gap-4 mb-7">
+              <div>
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse shadow-[0_0_10px_rgba(37,211,102,0.5)]"></div>
+                  <span class="text-[11px] uppercase tracking-widest font-medium text-zinc-500">Your Position</span>
+                </div>
+                <div class="flex items-baseline gap-3">
+                  <span id="position" class="text-[44px] leading-none font-semibold tracking-[-0.03em] bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">#47</span>
+                  <span class="px-2.5 py-1 rounded-full bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-[11px] font-medium">Confirmed</span>
+                </div>
+              <div class="text-right">
+                <div class="text-[11px] uppercase tracking-widest font-medium text-zinc-500 mb-2">Access</div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span class="text-[13px] font-medium text-zinc-200">2–3 weeks</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[12px] text-zinc-500">Waitlist filling fast</span>
+                <span id="progress-text" class="text-[12px] font-medium text-zinc-300 mono">78% full</span>
+              </div>
+              <div class="relative h-[10px] w-full overflow-hidden rounded-full bg-black/60 border border-white/[0.06] p-[2px] shadow-inner">
+                <div class="absolute inset-[2px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.05),_transparent_70%)]"></div>
+                <div id="progress-bar" class="relative h-full w-0 rounded-full transition-all duration-[1.5s] ease-out overflow-hidden shimmer">
+                  <div class="absolute inset-0 bg-gradient-to-r from-violet-600 via-[#7c3aed] to-blue-500"></div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-white/20 mix-blend-overlay"></div>
+                </div>
+              <p class="text-[12px] leading-relaxed text-zinc-500">We’re onboarding in small batches to ensure quality. Refer friends to jump ahead.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- What happens next -->
+    <div class="mb-9 fade-in delay-4">
+      <h2 class="text-[13px] font-medium tracking-wide text-zinc-400 uppercase mb-3 px-1">What happens next</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Step 1 -->
+        <div class="group relative">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.08] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="relative h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/[0.07] p-4 hover:border-white/15 transition-colors">
+            <div class="w-9 h-9 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 flex items-center justify-center mb-3 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M20.52 3.48A11.9 11.9 0 0 0 12.07 0C5.46.04.1 5.4.07 12.01c0 2.12.55 4.19 1.6 6.02L0 24l6.18-1.62a11.9 11.9 0 0 0 5.69 1.45h.01c6.6-.03 11.97-5.4 12-12A11.84 11.84 0 0 0 20.52 3.48ZM12.07 21.4h-.01a9.56 9.56 0 0 1-4.88-1.34l-.35-.21-3.67.96.98-3.58-.23-.37a9.54 9.54 0 0 1-1.45-5.07c.03-5.27 4.32-9.55 9.6-9.55 2.57 0 4.98 1 6.8 2.82a9.53 9.53 0 0 1 2.8 6.78c-.03 5.27-4.32 9.56-9.59 9.56Zm5.27-7.15c-.29-.15-1.7-.84-1.96-.93-.27-.1-.46-.14-.65.15-.19.28-.75.93-.92 1.12-.17.2-.34.22-.63.07-.29-.14-1.22-.45-2.32-1.43-.86-.77-1.44-1.72-1.6-2.01-.17-.29-.02-.45.13-.59.13-.13.29-.34.43-.51.14-.17.19-.29.29-.48.1-.2.05-.37-.02-.52-.07-.14-.65-1.57-.89-2.15-.24-.57-.47-.49-.65-.5l-.55-.01c-.2 0-.51.07-.78.36-.27.29-1.03 1-1.03 2.44 0 1.43 1.06 2.82 1.2 3.01.15.2 2.08 3.18 5.04 4.46.7.3 1.25.48 1.68.62.7.22 1.35.19 1.85.12.56-.08 1.7-.7 1.94-1.37.24-.67.24-1.25.17-1.37-.07-.13-.26-.2-.54-.34Z"/>
+              </svg>
+            </div>
+            <div class="text-[14px] font-medium text-white mb-1">We'll WhatsApp you</div>
+            <div class="text-[13px] leading-snug text-zinc-500">Your invite arrives directly on WhatsApp when it's your turn.</div>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="group relative">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.08] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="relative h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/[0.07] p-4 hover:border-white/15 transition-colors">
+            <div class="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-violet-400"><path d="M12 3l1.9 4.1 4.5.7-3.2 3.4.8 4.5-4-2.2-4 2.2.8-4.5-3.2-3.4 4.5-.7L12 3z"/></svg>
+            </div>
+            <div class="text-[14px] font-medium text-white mb-1">Get early access</div>
+            <div class="text-[13px] leading-snug text-zinc-500">Full platform access, free during beta. No credit card.</div>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="group relative">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.08] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="relative h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/[0.07] p-4 hover:border-white/15 transition-colors">
+            <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><path d="M8 16h8"/></svg>
+            </div>
+            <div class="text-[14px] font-medium text-white mb-1">Build your first bot</div>
+            <div class="text-[13px] leading-snug text-zinc-500">Launch in minutes with templates or from scratch.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral -->
+    <div class="relative group mb-10 fade-in delay-5">
+      <div class="absolute -inset-px rounded-[26px] bg-gradient-to-b from-violet-500/15 to-blue-500/15 opacity-60 blur-xl"></div>
+      <div class="relative rounded-[24px] bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] overflow-hidden">
+        <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent"></div>
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <div class="hidden sm:flex w-11 h-11 rounded-2xl bg-gradient-to-b from-violet-600/20 to-blue-600/20 border border-violet-500/20 items-center justify-center shrink-0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-violet-300"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-[18px] font-semibold tracking-tight text-white">Skip the line — refer friends</h3>
+              <p class="text-[13.5px] text-zinc-400 mt-1">Every friend who joins moves you up <span class="text-white font-medium">5 spots</span>.</p>
+            </div>
+          </div>
+
+          <div class="mt-5 flex gap-2">
+            <div class="relative flex-1">
+              <input id="ref-link" readonly value="https://chatsprout.in/r/..." class="w-full h-[44px] bg-black/50 border border-white/10 rounded-xl pl-3.5 pr-11 text-[13px] text-zinc-200 outline-none focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10 transition mono"/>
+              <button id="copy-btn" onclick="copyRef()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-[32px] h-[32px] rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition active:scale-95">
+                <svg id="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3 grid grid-cols-3 gap-2">
+            <a id="share-wa" target="_blank" rel="noopener" class="group/btn relative h-[40px] rounded-xl bg-[#25D366]/[0.08] hover:bg-[#25D366]/[0.15] border border-[#25D366]/20 hover:border-[#25D366]/30 flex items-center justify-center gap-1.5 text-[13px] font-medium text-[#25D366] transition overflow-hidden">
+              <div class="absolute inset-0 opacity-0 group-hover/btn:opacity-100 bg-gradient-to-b from-white/10 to-transparent transition"></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.07 0C5.46.04.1 5.4.07 12.01c0 2.12.55 4.19 1.6 6.02L0 24l6.18-1.62a11.9 11.9 0 0 0 5.69 1.45h.01c6.6-.03 11.97-5.4 12-12A11.84 11.84 0 0 0 20.52 3.48Z"/></svg>
+              <span class="hidden sm:inline">WhatsApp</span>
+            </a>
+            <a id="share-tw" target="_blank" rel="noopener" class="group/btn relative h-[40px] rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center gap-1.5 text-[13px] font-medium text-zinc-300 hover:text-white transition">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span class="hidden sm:inline">Twitter</span>
+            </a>
+            <a id="share-li" target="_blank" rel="noopener" class="group/btn relative h-[40px] rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center gap-1.5 text-[13px] font-medium text-zinc-300 hover:text-white transition">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              <span class="hidden sm:inline">LinkedIn</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Follow -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 py-6 border-t border-white/[0.06] fade-in delay-6">
+      <span class="text-[13px] text-zinc-500">Follow our journey</span>
+      <div class="flex items-center gap-2.5">
+        <a href="https://twitter.com" target="_blank" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white transition">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white transition">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://github.com" target="_blank" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white transition">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.652.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center pt-2 pb-8 fade-in delay-6">
+      <p class="text-[12.5px] text-zinc-600">Questions? <a href="mailto:hello@chatsprout.in" class="text-zinc-400 hover:text-white transition underline-offset-2 hover:underline">hello@chatsprout.in</a></p>
+      <p class="text-[11px] text-zinc-700 mt-3">© 2025 ChatSprout Labs. Built for WhatsApp-first teams.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Confetti
+    const colors = ['#8b5cf6', '#6366f1', '#3b82f6', '#25D366', '#ffffff'];
+    const count = 140;
+    confetti({ particleCount: count, spread: 90, origin: { y: 0.25 }, colors, startVelocity: 45, scalar: 0.9, ticks: 200 });
+    setTimeout(() => confetti({ particleCount: count * 0.6, angle: 60, spread: 70, origin: { x: 0, y: 0.6 }, colors }), 250);
+    setTimeout(() => confetti({ particleCount: count * 0.6, angle: 120, spread: 70, origin: { x: 1, y: 0.6 }, colors }), 400);
+
+    // Dynamic position
+    const pos = Math.floor(Math.random() * 19) + 37; // 37-55
+    document.getElementById('position').textContent = '#' + pos;
+
+    // Progress
+    const progress = 72 + Math.floor(Math.random() * 14); // 72-85
+    setTimeout(() => {
+      document.getElementById('progress-bar').style.width = progress + '%';
+      document.getElementById('progress-text').textContent = progress + '% full';
+    }, 600);
+
+    // Referral
+    const code = Math.random().toString(36).substring(2, 8);
+    const refLink = `https://chatsprout.in/r/${code}`;
+    const refInput = document.getElementById('ref-link');
+    refInput.value = refLink;
+
+    const shareText = `I just joined the ChatSprout waitlist — WhatsApp automation that actually works.\n\nJoin me here: ${refLink}`;
+    document.getElementById('share-wa').href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(refLink)}`;
+  });
+
+  function copyRef() {
+    const input = document.getElementById('ref-link');
+    const btn = document.getElementById('copy-btn');
+    navigator.clipboard.writeText(input.value).then(() => {
+      const original = btn.innerHTML;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+      btn.classList.add('!bg-[#25D366]/15', '!border-[#25D366]/30');
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.classList.remove('!bg-[#25D366]/15', '!border-[#25D366]/30');
+      }, 2000);
+    });
+  }
+</script>
+
+<style>
+  @keyframes wiggle { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+</style>
+</body>
+</html>

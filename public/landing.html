@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ta">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RedAnt — WhatsApp, Instagram & Facebook AI for Shops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Tamil', sans-serif
+        }
+
+        .font-tamil {
+            font-family: 'Noto Sans Tamil', 'Inter'
+        }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .message-animate {
+            animation: messageIn 0.4s ease-out forwards;
+        }
+
+        .count-animate {
+            animation: countUp 0.6s ease-out forwards;
+        }
+
+        .whatsapp-bg {
+            background-color: #e5ddd5;
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d1c7b8' fill-opacity='0.2'%3E%3Cpath d='M100 100c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm0 32c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z'/%3E%3Cpath d='M300 200c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm0 32c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z'/%3E%3Cpath d='M200 50c-5.5 0-10 4.5-10 10v20c0 5.5 4.5 10 10 10h20c5.5 0 10-4.5 10-10V60c0-5.5-4.5-10-10-10h-20zm15 20h-10v-10h10v10z'/%3E%3Cpath d='M50 250c-5.5 0-10 4.5-10 10v20c0 5.5 4.5 10 10 10h20c5.5 0 10-4.5 10-10v-20c0-5.5-4.5-10-10-10H50zm15 20H55v-10h10v10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+
+<body class="bg-white text-[#0f172a] antialiased">
+
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-100">
+        <nav class="flex items-center justify-between px-[5%] py-4 bg-white">
+  <div class="flex items-center gap-2 group cursor-pointer bg-green-100 p-3 rounded-full">
+  <img 
+    src="./RedAnt_logo.png" 
+    alt="RedAnt" 
+    class="h-10 w-auto object-contain transition-transform group-hover:scale-110 origin-left"
+  />
+  
+  <span class="text-2xl font-bold tracking-tight text-[#E11D48]">
+    RedAnt
+  </span>
+</div>
+
+  <div class="hidden md:flex items-center gap-8 text-gray-600 font-medium">
+    <a href="#" class="hover:text-emerald-700 transition-colors">Features</a>
+    <a href="#" class="hover:text-emerald-700 transition-colors">Pricing</a>
+    <a href="#" class="hover:text-emerald-700 transition-colors">Integrations</a>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <span class="text-gray-700 font-medium cursor-pointer">தமிழ்</span>
+    <button class="bg-[#007144] hover:bg-[#005a36] text-white px-5 py-2.5 rounded-lg font-semibold transition-all shadow-sm">
+      Start Free
+    </button>
+  </div>
+</nav>
+        <div id="mobileMenu"
+            class="mobile-menu fixed top-[64px] right-0 w-64 h-screen bg-white border-l shadow-xl lg:hidden z-50">
+            <div class="p-6 space-y-4">
+                <a href="#features" class="block py-2" data-i18n="navFeatures">Features</a>
+                <a href="#pricing" class="block py-2" data-i18n="navPricing">Pricing</a>
+                <a href="#integrations" class="block py-2" data-i18n="navIntegrations">Integrations</a>
+                <a href="#waitlist"
+                    class="block mt-4 h-11 bg-[#00A651] text-white rounded-lg font-semibold grid place-items-center"
+                    data-i18n="navCta">Start Free</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-[1200px] mx-auto px-4 pt-8 md:pt-14 pb-12 md:pb-20">
+        <div class="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div>
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] md:text-[12px] font-medium mb-4 border border-emerald-100">
+                    <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse"></span>
+                    <span data-i18n="heroTag">Built for Tamil Nadu boutiques & D2C brands</span>
+                </div>
+                <h1
+                    class="font-tamil font-extrabold text-[32px] sm:text-[38px] md:text-[42px] lg:text-[56px] leading-[1.15] tracking-tight">
+                    <span data-i18n="h1a">Turn Instagram DMs,</span><br>
+                    <span data-i18n="h1b">WhatsApp & Facebook</span><br>
+                    <span class="text-[#00A651] relative"><span data-i18n="h1c">into sales on autopilot</span>
+                        <svg class="absolute -bottom-2 left-0 w-full h-3 text-emerald-200 -z-10" viewBox="0 0 300 12"
+                            fill="none">
+                            <path d="M2 8c60-6 120-8 180-5 40 2 80 5 116 3" stroke="currentColor" stroke-width="8"
+                                stroke-linecap="round" opacity="0.3" />
+                        </svg>
+                    </span>
+                </h1>
+                <p class="mt-4 text-[15px] md:text-[18px] text-slate-600 leading-relaxed" data-i18n="heroSub">AI replies
+                    in Tamil & English to 'price?', 'COD?', 'available?' — across Instagram, WhatsApp Business, and
+                    Facebook. Syncs with Shopify, WooCommerce, Dukaan. No coding.</p>
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <a href="#waitlist"
+                        class="group h-11 md:h-12 px-6 bg-[#00A651] text-white rounded-xl font-semibold grid place-items-center hover:bg-[#008f46] transition-all hover:shadow-lg hover:shadow-emerald-500/25 relative overflow-hidden">
+                        <span class="relative z-10 flex items-center gap-2"><span data-i18n="heroCta1">Get started
+                                free</span> <span
+                                class="group-hover:translate-x-0.5 transition-transform">→</span></span>
+                    </a>
+                    <a href="#demo"
+                        class="h-11 md:h-12 px-5 border border-slate-300 rounded-xl font-medium grid place-items-center hover:bg-slate-50 hover:border-slate-400 transition-all"
+                        data-i18n="heroCta2">Watch 2-min demo</a>
+                </div>
+                <div class="mt-5 flex items-center gap-4 text-[12px] md:text-[13px] text-slate-500">
+                    <div class="flex -space-x-2">
+                        <img class="w-7 h-7 rounded-full border-2 border-white shadow-sm"
+                            src="https://i.pravatar.cc/28?1">
+                        <img class="w-7 h-7 rounded-full border-2 border-white shadow-sm"
+                            src="https://i.pravatar.cc/28?2">
+                        <img class="w-7 h-7 rounded-full border-2 border-white shadow-sm"
+                            src="https://i.pravatar.cc/28?3">
+                        <div
+                            class="w-7 h-7 rounded-full border-2 border-white bg-slate-900 text-white grid place-items-center text-[10px] font-medium">
+                            +47</div>
+                    </div>
+                    <span class="font-medium" data-i18n="trust">Trusted by 50+ Coimbatore stores</span>
+                </div>
+            </div>
+
+            <div class="relative flex flex-col items-center lg:items-end mt-12 lg:mt-0">
+                <div
+                    class="absolute top-10 -right-10 w-72 h-72 bg-gradient-to-br from-emerald-400/30 to-cyan-400/30 rounded-full blur-3xl">
+                </div>
+                <div
+                    class="absolute bottom-10 -left-10 w-64 h-64 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl">
+                </div>
+
+                <div class="relative float-animation">
+                    <div class="absolute inset-0 bg-black/20 blur-2xl scale-95 translate-y-8 rounded-[3rem]"></div>
+
+                    <div class="relative w-[300px] h-[615px] md:w-[315px] md:h-[645px]">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-b from-[#3a3a3c] via-[#1c1c1e] to-[#3a3a3c] rounded-[3.2rem] shadow-[0_0_0_1px_rgba(255,255,255,0.1)_inset,0_25px_50px_-12px_rgba(0,0,0,0.5)]">
+                            <div class="absolute -left-[2px] top-24 w-[3px] h-7 bg-[#2c2c2e] rounded-l-sm"></div>
+                            <div class="absolute -left-[2px] top-36 w-[3px] h-12 bg-[#2c2c2e] rounded-l-sm"></div>
+                            <div class="absolute -left-[2px] top-52 w-[3px] h-12 bg-[#2c2c2e] rounded-l-sm"></div>
+                            <div class="absolute -right-[2px] top-32 w-[3px] h-16 bg-[#2c2c2e] rounded-r-sm"></div>
+                        </div>
+
+                        <div class="absolute inset-[10px] bg-black rounded-[2.7rem] overflow-hidden">
+                            <div class="w-full h-full bg-white relative overflow-hidden">
+                                <div
+                                    class="absolute top-2 left-1/2 -translate-x-1/2 w-[90px] h-[28px] bg-black rounded-full z-30 flex items-center justify-center">
+                                    <div class="w-12 h-4 bg-[#1a1a1a] rounded-full flex items-center justify-end pr-1">
+                                        <div class="w-2.5 h-2.5 bg-[#0a0a0a] rounded-full"></div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="h-[52px] flex items-end justify-between px-8 pb-2 text-[14px] font-semibold">
+                                    <span>9:41</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+                                            <path d="M1 6h3M5 3v6M9 2v8M13 4v4M17 6h-3" stroke="black"
+                                                stroke-width="1.5" stroke-linecap="round" />
+                                        </svg>
+                                        <svg width="24" height="12" viewBox="0 0 24 12" fill="none">
+                                            <rect x="0.5" y="1" width="20" height="10" rx="3" stroke="black"
+                                                stroke-width="1.2" fill="none" />
+                                            <path d="M22 4v4" stroke="black" stroke-width="1.2"
+                                                stroke-linecap="round" />
+                                            <rect x="2" y="3" width="14" height="6" rx="1.5" fill="black" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="h-[56px] bg-[#008069] relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
+                                    <div class="relative h-full flex items-center px-3 gap-3 text-white">
+                                        <button class="p-1.5 -ml-1 hover:bg-white/10 rounded-full transition">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M15 19l-7-7 7-7" />
+                                            </svg>
+                                        </button>
+                                        <div class="relative">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-600 p-[1.5px]">
+                                                <div
+                                                    class="w-full h-full rounded-full bg-white grid place-items-center">
+                                                    <span
+                                                        class="text-[15px] font-bold bg-gradient-to-br from-pink-500 to-purple-600 bg-clip-text text-transparent">P</span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="absolute bottom-0 right-0 w-3 h-3 bg-[#25d366] rounded-full border-2 border-[#008069] animate-pulse">
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-semibold text-[16px] leading-tight truncate">Priya Sarees ✨
+                                            </div>
+                                            <div class="text-[12px] opacity-90 leading-tight" data-i18n="online">tap
+                                                here for contact info</div>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <button class="p-2 hover:bg-white/10 rounded-full transition"><svg
+                                                    class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                                                </svg></button>
+                                            <button class="p-2 hover:bg-white/10 rounded-full transition"><svg
+                                                    class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                                </svg></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="h-[calc(100%-164px)] relative overflow-hidden whatsapp-bg">
+                                    <div class="absolute inset-0 overflow-y-auto px-3 py-3 space-y-2.5">
+                                        <div class="flex justify-center py-1">
+                                            <span
+                                                class="px-2.5 py-1 bg-white/90 backdrop-blur text-[11px] font-medium text-[#54656f] rounded-md shadow-sm"
+                                                data-i18n="today">TODAY</span>
+                                        </div>
+
+                                        <div class="flex message-animate" style="animation-delay: 0.1s">
+                                            <div
+                                                class="bg-white px-3 py-2 rounded-[8px] rounded-tl-[2px] shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] max-w-[78%] relative">
+                                                <p class="text-[14px] leading-[19px] text-[#111b21]" id="chat1">Akka
+                                                    blue saree price? 🤔</p>
+                                                <p class="text-[11px] text-[#667781] mt-1 text-right leading-none">10:24
+                                                    am</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-end message-animate" style="animation-delay: 0.3s">
+                                            <div
+                                                class="bg-[#d9fdd3] px-3 py-2 rounded-[8px] rounded-tr-[2px] shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] max-w-[78%] relative">
+                                                <p class="text-[14px] leading-[19px] text-[#111b21]" id="chat2">₹1,850 •
+                                                    COD available • Free shipping</p>
+                                                <div class="flex items-center justify-end gap-1 mt-1">
+                                                    <p class="text-[11px] text-[#667781] leading-none">10:24 am</p>
+                                                    <svg class="w-3.5 h-3.5 text-[#53bdeb]" viewBox="0 0 12 11"
+                                                        fill="currentColor">
+                                                        <path d="M11.1 2.8L5.9 8.4l-3-2.4.8-1 2.2 1.7 4.4-4.7.8.8z" />
+                                                        <path d="M7.1 2.8L1.9 8.4l-1-1.1.8-1 2.2 1.7 4.4-4.7.8.8z"
+                                                            opacity=".6" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex message-animate" style="animation-delay: 0.5s">
+                                            <div
+                                                class="bg-white px-3 py-2 rounded-[8px] rounded-tl-[2px] shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] max-w-[78%]">
+                                                <p class="text-[14px] leading-[19px] text-[#111b21]" id="chat3">
+                                                    Instagram-la order pannalama?</p>
+                                                <p class="text-[11px] text-[#667781] mt-1 text-right leading-none">10:25
+                                                    am</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-end message-animate" style="animation-delay: 0.7s">
+                                            <div
+                                                class="bg-[#d9fdd3] px-2.5 py-2 rounded-[8px] rounded-tr-[2px] shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] max-w-[82%]">
+                                                <div
+                                                    class="bg-white rounded-[6px] p-2 mb-1.5 shadow-sm border border-black/5">
+                                                    <div class="flex gap-2.5">
+                                                        <div
+                                                            class="w-[58px] h-[58px] rounded-[4px] overflow-hidden bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 relative">
+                                                            <div
+                                                                class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3),transparent_50%)]">
+                                                            </div>
+                                                            <div
+                                                                class="absolute bottom-1 right-1 w-5 h-5 bg-white/90 backdrop-blur rounded-full grid place-items-center shadow-sm">
+                                                                <span class="text-[10px]">👗</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-1 min-w-0 py-0.5">
+                                                            <p class="text-[13px] font-semibold text-[#111b21] leading-tight truncate"
+                                                                id="prodName">Blue Banarasi Silk Saree</p>
+                                                            <p class="text-[11px] text-[#667781] mt-0.5"
+                                                                data-i18n="inStock">Free size • In stock</p>
+                                                            <div class="flex items-baseline gap-1.5 mt-1">
+                                                                <p class="text-[15px] font-bold text-[#008069]">₹1,850
+                                                                </p>
+                                                                <p class="text-[11px] text-[#667781] line-through">
+                                                                    ₹2,400</p>
+                                                                <span
+                                                                    class="text-[10px] px-1 py-0.5 bg-[#e7f8f0] text-[#008069] rounded font-medium">23%
+                                                                    OFF</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-[14px] leading-[19px] text-[#111b21] px-0.5" id="chat4">
+                                                    Yes! Tap to order 👆 or reply "BUY"</p>
+                                                <div class="flex items-center justify-end gap-1 mt-1 px-0.5">
+                                                    <p class="text-[11px] text-[#667781] leading-none">10:25 am</p>
+                                                    <svg class="w-3.5 h-3.5 text-[#53bdeb]" viewBox="0 0 12 11"
+                                                        fill="currentColor">
+                                                        <path d="M11.1 2.8L5.9 8.4l-3-2.4.8-1 2.2 1.7 4.4-4.7.8.8z" />
+                                                        <path d="M7.1 2.8L1.9 8.4l-1-1.1.8-1 2.2 1.7 4.4-4.7.8.8z"
+                                                            opacity=".6" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex message-animate" style="animation-delay: 1s">
+                                            <div
+                                                class="bg-white px-3.5 py-2.5 rounded-[8px] rounded-tl-[2px] shadow-[0_1px_0.5px_rgba(0,0,0,0.13)]">
+                                                <div class="flex gap-1 items-center">
+                                                    <span
+                                                        class="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce [animation-duration:1s]"></span>
+                                                    <span
+                                                        class="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.15s]"></span>
+                                                    <span
+                                                        class="w-1.5 h-1.5 bg-[#8696a0] rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.3s]"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="absolute bottom-2 left-3 right-3">
+                                        <div
+                                            class="mx-auto w-fit px-2.5 py-1 bg-[#1f2c34]/90 backdrop-blur-md rounded-full flex items-center gap-1.5 shadow-lg">
+                                            <div
+                                                class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 animate-pulse">
+                                            </div>
+                                            <span class="text-[10px] font-medium text-white tracking-wide"
+                                                id="aiStatus">AI • Tamil • 1.2s</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="h-[56px] bg-[#f0f2f5] flex items-center px-2.5 gap-2">
+                                    <button class="p-2 hover:bg-black/5 rounded-full transition"><svg
+                                            class="w-6 h-6 text-[#54656f]" fill="none" stroke="currentColor"
+                                            stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg></button>
+                                    <div
+                                        class="flex-1 h-[38px] bg-white rounded-full px-4 flex items-center shadow-sm border border-black/5">
+                                        <span class="text-[15px] text-[#8696a0]" data-i18n="message">Message</span>
+                                    </div>
+                                    <button
+                                        class="w-10 h-10 bg-[#008069] rounded-full grid place-items-center shadow-md hover:bg-[#017561] transition active:scale-95">
+                                        <svg class="w-5 h-5 text-white translate-x-0.5" fill="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[110px] h-[5px] bg-white/80 rounded-full">
+                        </div>
+                    </div>
+
+                    <div class="hidden lg:block absolute -left-20 top-16 float-animation" style="animation-delay: 0s">
+                        <div
+                            class="bg-white/90 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-xl border border-white/20 count-animate">
+                            <div class="flex items-center gap-2.5">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 grid place-items-center shadow-lg shadow-emerald-500/20">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] text-slate-500 font-medium whitespace-nowrap"
+                                        data-i18n="statMessages">Messages today</div>
+                                    <div class="text-[20px] font-bold leading-none text-slate-900 whitespace-nowrap">
+                                        <span id="msgCount">2,847</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hidden lg:block absolute -right-16 bottom-24 float-animation"
+                        style="animation-delay: 1s">
+                        <div class="bg-white/90 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-xl border border-white/20 count-animate"
+                            style="animation-delay: 0.2s">
+                            <div class="flex items-center gap-2.5">
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 grid place-items-center shadow-lg shadow-violet-500/20">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] text-slate-500 font-medium whitespace-nowrap"
+                                        data-i18n="statReply">Avg response</div>
+                                    <div class="text-[20px] font-bold leading-none text-slate-900 whitespace-nowrap">
+                                        1.2<span class="text-[14px] font-semibold text-slate-500 ml-0.5">s</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex lg:hidden gap-3 mt-6 w-full max-w-[315px]">
+                    <div
+                        class="flex-1 min-w-0 bg-white/90 backdrop-blur-xl px-3.5 py-3 rounded-2xl shadow-lg border border-slate-200">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 grid place-items-center shadow-md flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-[10px] text-slate-500 font-medium truncate" data-i18n="statMessages">
+                                    Messages today</div>
+                                <div class="text-[17px] font-bold leading-none text-slate-900 truncate">2,847</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex-1 min-w-0 bg-white/90 backdrop-blur-xl px-3.5 py-3 rounded-2xl shadow-lg border border-slate-200">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-purple-600 grid place-items-center shadow-md flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-[10px] text-slate-500 font-medium truncate" data-i18n="statReply">Avg
+                                    response</div>
+                                <div class="text-[17px] font-bold leading-none text-slate-900 whitespace-nowrap">
+                                    1.2<span class="text-[11px] ml-0.5">s</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="bg-slate-50 border-y py-12 md:py-20">
+        <div class="max-w-[1200px] mx-auto px-4">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <h2 class="font-tamil text-[28px] md:text-[40px] font-extrabold tracking-tight" data-i18n="featTitle">
+                    Everything you need to sell on chat</h2>
+                <p class="mt-3 text-[15px] text-slate-600" data-i18n="featSub">Not just WhatsApp. Built for how Tamil
+                    Nadu shops actually sell.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        💬</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f1t">Unified Inbox</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f1d">Instagram, WhatsApp,
+                        Facebook — one inbox.</p>
+                </div>
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        🤖</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f2t">Tamil + English AI</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f2d">Understands Tanglish.
+                        Answers in your tone.</p>
+                </div>
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        📸</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f3t">Instagram Automation</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f3d">Auto-reply to DMs,
+                        stories, comments.</p>
+                </div>
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        🛒</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f4t">Cart Integration</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f4d">Shopify, WooCommerce,
+                        Dukaan sync.</p>
+                </div>
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        💰</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f5t">COD & Payments</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f5d">UPI, Razorpay, COD
+                        flows.</p>
+                </div>
+                <div
+                    class="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 grid place-items-center mb-4 group-hover:scale-110 transition-transform text-[22px]">
+                        📊</div>
+                    <h3 class="font-semibold text-[16px]" data-i18n="f6t">Broadcasts</h3>
+                    <p class="text-[14px] text-slate-600 mt-1.5 leading-relaxed" data-i18n="f6d">Send campaigns safely.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="waitlist" class="max-w-[720px] mx-auto px-4 py-14 md:py-20">
+        <div class="relative">
+            <div
+                class="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-[2rem] blur-2xl opacity-20">
+            </div>
+            <div class="relative bg-white border border-slate-200 rounded-[2rem] p-7 md:p-10 shadow-xl">
+                <div class="text-center">
+                    <div
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-medium mb-4 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                        <span data-i18n="earlyAccess">Early access • 47 spots left</span>
+                    </div>
+                    <h3 class="font-tamil text-[26px] md:text-[30px] font-extrabold tracking-tight"
+                        data-i18n="waitTitle">Start selling on autopilot</h3>
+                    <p class="text-[15px] text-slate-600 mt-1.5" data-i18n="waitSub">Setup in 2 minutes. No credit card.
+                    </p>
+                </div>
+                <form id="f" class="mt-7 grid sm:grid-cols-2 gap-3 max-w-lg mx-auto">
+                    <input name="name" required placeholder="Your name" data-i18n-ph="namePh"
+                        class="h-12 px-4 border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition text-[15px] bg-white">
+                    <input name="phone" required placeholder="WhatsApp number" data-i18n-ph="phonePh" type="tel"
+                        class="h-12 px-4 border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition text-[15px] bg-white">
+                    <select name="channel"
+                        class="h-12 px-3.5 border border-slate-300 rounded-xl sm:col-span-2 bg-white text-[15px] outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option data-i18n="opt1">Instagram + WhatsApp</option>
+                        <option data-i18n="opt2">All 3 channels</option>
+                        <option data-i18n="opt3">WhatsApp only</option>
+                    </select>
+                    <button type="submit"
+                        class="group sm:col-span-2 h-12 bg-[#00A651] text-white rounded-xl font-semibold hover:bg-[#008f46] transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98] relative overflow-hidden"><span
+                            id="btnText" class="relative z-10 flex items-center justify-center gap-2"><span
+                                data-i18n="createBtn">Create free account</span> <span
+                                class="group-hover:translate-x-0.5 transition-transform">→</span></span></button>
+                </form>
+                <div id="ok" class="hidden py-8 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 grid place-items-center shadow-lg shadow-emerald-500/25">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="3"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <p class="text-[18px] font-bold" data-i18n="welcome">Welcome aboard! 🎉</p>
+                    <p class="text-[14px] text-slate-600 mt-1" data-i18n="redirecting">Redirecting to your dashboard...
+                    </p>
+                </div>
+                <p class="text-center text-[12px] text-slate-500 mt-5" data-i18n="terms">By joining, you agree to our
+                    Terms. We’ll WhatsApp you updates.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-slate-200 py-8">
+        <div
+            class="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px] text-slate-500">
+            <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded bg-[#00A651] grid place-items-center"><span
+                        class="text-white font-bold text-[11px]">RA</span></div><span>© 2026 RedAnt
+                    Automations</span>
+            </div><span class="flex items-center gap-1.5" data-i18n="footer">Made with <span
+                    class="text-red-500">♥</span> in Tirupur</span>
+        </div>
+    </footer>
+
+    <script>
+        const T = {
+            ta: {
+                navFeatures: "அம்சங்கள்", navPricing: "விலை", navIntegrations: "இணைப்புகள்", navCta: "இலவசமாக தொடங்கு",
+                heroTag: "தமிழ்நாடு பூட்டிக் & D2C பிராண்டுகளுக்காக உருவாக்கப்பட்டது",
+                h1a: "Instagram DM-களை,", h1b: "WhatsApp & Facebook-ஐ", h1c: "தானியங்கி விற்பனையாக மாற்றுங்கள்",
+                heroSub: "AI தமிழ் & ஆங்கிலத்தில் 'விலை?', 'COD?', 'இருக்கா?' என்று பதிலளிக்கிறது — Instagram, WhatsApp Business, மற்றும் Facebook முழுவதும். Shopify, WooCommerce, Dukaan உடன் ஒத்திசைக்கிறது. கோடிங் தேவையில்லை.",
+                heroCta1: "இலவசமாக தொடங்கு", heroCta2: "2 நிமிட டெமோ பார்", trust: "50+ கோவை கடைகள் நம்புகின்றன",
+                online: "தொடர்புக்கு இங்கே தட்டவும்", today: "இன்று", message: "செய்தி",
+                statMessages: "இன்றைய செய்திகள்", statReply: "சராசரி பதில்",
+                featTitle: "சாட்டில் விற்க தேவையான அனைத்தும்", featSub: "WhatsApp மட்டுமல்ல. தமிழ்நாடு கடைகள் எப்படி விற்கின்றன என்பதற்காக உருவாக்கப்பட்டது.",
+                f1t: "ஒருங்கிணைந்த இன்பாக்ஸ்", f1d: "Instagram, WhatsApp, Facebook — ஒரே இடத்தில்.",
+                f2t: "தமிழ் + ஆங்கில AI", f2d: "தங்கிலீஷ் புரியும். உங்கள் குரலில் பதிலளிக்கும்.",
+                f3t: "Instagram ஆட்டோமேஷன்", f3d: "DM, ஸ்டோரி, கமெண்ட்களுக்கு தானியங்கி பதில்.",
+                f4t: "கார்ட் இணைப்பு", f4d: "Shopify, Woo, Dukaan ஒத்திசைவு.",
+                f5t: "COD & பணம்", f5d: "UPI, Razorpay, COD ஓட்டங்கள்.",
+                f6t: "ஒளிபரப்புகள்", f6d: "பாதுகாப்பாக பிரச்சாரங்களை அனுப்புங்கள்.",
+                earlyAccess: "ஆரம்ப அணுகல் • 47 இடங்கள் மீதம்", waitTitle: "தானியங்கியில் விற்பனையைத் தொடங்குங்கள்", waitSub: "2 நிமிடங்களில் அமைக்கவும். கிரெடிட் கார்டு தேவையில்லை.",
+                namePh: "உங்கள் பெயர்", phonePh: "WhatsApp எண்", opt1: "Instagram + WhatsApp", opt2: "3 சேனல்களும்", opt3: "WhatsApp மட்டும்",
+                createBtn: "இலவச கணக்கை உருவாக்கு", welcome: "வரவேற்கிறோம்! 🎉", redirecting: "உங்கள் டாஷ்போர்டுக்கு திருப்பி விடுகிறது...",
+                terms: "சேருவதன் மூலம், நீங்கள் எங்கள் விதிமுறைகளை ஏற்றுக்கொள்கிறீர்கள். WhatsApp-ல் புதுப்பிப்புகளை அனுப்புவோம்.",
+                footer: "கோவையில் ♥ உடன் உருவாக்கப்பட்டது", inStock: "இலவச அளவு • கையிருப்பில் உள்ளது"
+            },
+            en: {
+                navFeatures: "Features", navPricing: "Pricing", navIntegrations: "Integrations", navCta: "Start Free",
+                heroTag: "Built for Tamil Nadu boutiques & D2C brands",
+                h1a: "Turn Instagram DMs,", h1b: "WhatsApp & Facebook", h1c: "into sales on autopilot",
+                heroSub: "AI replies in Tamil & English to 'price?', 'COD?', 'available?' — across Instagram, WhatsApp Business, and Facebook. Syncs with Shopify, WooCommerce, Dukaan. No coding.",
+                heroCta1: "Get started free", heroCta2: "Watch 2-min demo", trust: "Trusted by 50+ Coimbatore stores",
+                online: "tap here for contact info", today: "TODAY", message: "Message",
+                statMessages: "Messages today", statReply: "Avg response",
+                featTitle: "Everything you need to sell on chat", featSub: "Not just WhatsApp. Built for how Tamil Nadu shops actually sell.",
+                f1t: "Unified Inbox", f1d: "Instagram, WhatsApp, Facebook — one inbox.",
+                f2t: "Tamil + English AI", f2d: "Understands Tanglish. Answers in your tone.",
+                f3t: "Instagram Automation", f3d: "Auto-reply to DMs, stories, comments.",
+                f4t: "Cart Integration", f4d: "Shopify, Woo, Dukaan sync.",
+                f5t: "COD & Payments", f5d: "UPI, Razorpay, COD flows.",
+                f6t: "Broadcasts", f6d: "Send campaigns safely.",
+                earlyAccess: "Early access • 47 spots left", waitTitle: "Start selling on autopilot", waitSub: "Setup in 2 minutes. No credit card.",
+                namePh: "Your name", phonePh: "WhatsApp number", opt1: "Instagram + WhatsApp", opt2: "All 3 channels", opt3: "WhatsApp only",
+                createBtn: "Create free account", welcome: "Welcome aboard! 🎉", redirecting: "Redirecting to your dashboard...",
+                terms: "By joining, you agree to our Terms. We’ll WhatsApp you updates.",
+                footer: "Made with ♥ in Coimbatore", inStock: "Free size • In stock"
+            }
+        };
+
+        let L = localStorage.getItem('chatsprout-lang') || 'ta';
+
+        function applyLang() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (T[L] && T[L][key]) {
+                    el.innerHTML = T[L][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (T[L] && T[L][key]) {
+                    el.placeholder = T[L][key];
+                }
+            });
+
+            document.getElementById('chat1').textContent = L === 'ta' ? 'Akka blue saree price? 🤔' : 'Price for blue saree? 🤔';
+            document.getElementById('chat2').textContent = L === 'ta' ? '₹1,850 • COD available • Free shipping' : '₹1,850 • COD available • Free shipping';
+            document.getElementById('chat3').textContent = L === 'ta' ? 'Instagram-la order pannalama?' : 'Can I order on Instagram?';
+            document.getElementById('chat4').textContent = L === 'ta' ? 'Yes! Tap to order 👆 or reply "BUY"' : 'Yes! Tap to order 👆 or reply "BUY"';
+            document.getElementById('prodName').textContent = L === 'ta' ? 'நீல பனாரசி பட்டு புடவை' : 'Blue Banarasi Silk Saree';
+            document.getElementById('aiStatus').textContent = L === 'ta' ? 'AI • தமிழ் • 1.2வி' : 'AI • Tamil • 1.2s';
+
+            document.getElementById('lang').textContent = L === 'ta' ? 'EN' : 'தமிழ்';
+            document.documentElement.lang = L;
+        }
+
+        document.getElementById('lang').onclick = () => {
+            L = L === 'ta' ? 'en' : 'ta';
+            localStorage.setItem('chatsprout-lang', L);
+            applyLang();
+        };
+
+        document.getElementById('menuBtn').onclick = () => document.getElementById('mobileMenu').classList.toggle('open');
+
+        document.querySelectorAll('#mobileMenu a').forEach(a => {
+            a.onclick = () => document.getElementById('mobileMenu').classList.remove('open');
+        });
+
+        let msgCount = 0;
+        const targetCount = 2847;
+        const counterEl = document.getElementById('msgCount');
+        const animateCounter = () => {
+            const increment = targetCount / 50;
+            const timer = setInterval(() => {
+                msgCount += increment;
+                if (msgCount >= targetCount) {
+                    msgCount = targetCount;
+                    clearInterval(timer);
+                }
+                if (counterEl) counterEl.textContent = Math.floor(msgCount).toLocaleString('en-IN');
+            }, 30);
+        };
+        setTimeout(animateCounter, 800);
+
+        document.getElementById('f').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const btnText = document.getElementById('btnText');
+            const originalContent = btnText.innerHTML;
+            btn.disabled = true;
+            btnText.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> ' + (L === 'ta' ? 'உருவாக்குகிறது...' : 'Creating...');
+
+            const data = Object.fromEntries(new FormData(e.target));
+            data.lang = L;
+
+            try {
+                // const res = await fetch('https://zzkwuxzpuhvwcgueeyiw.supabase.co/functions/v1/signup', { 
+                //     method: 'POST', 
+                //     headers: {'Content-Type':'application/json'}, 
+                //     body: JSON.stringify(data) 
+                // });
+                const res = await fetch('https://zzkwuxzpuhvwcgueeyiw.supabase.co/functions/v1/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_ANON_KEY_HERE',
+                        'apikey': 'YOUR_ANON_KEY_HERE'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    e.target.classList.add('hidden');
+                    document.getElementById('ok').classList.remove('hidden');
+                    const position = result.position || Math.floor(Math.random() * 50) + 10;
+                    setTimeout(() => {
+                        window.parent.postMessage({ type: 'chatsprout-joined', position: position }, '*');
+                    }, 1200);
+                } else {
+                    throw new Error('Failed');
+                }
+            } catch (err) {
+                alert(L === 'ta' ? 'ஏதோ தவறு நடந்தது. WhatsApp செய்யவும்.' : 'Something went wrong. Please WhatsApp us.');
+                btn.disabled = false;
+                btnText.innerHTML = originalContent;
+                applyLang();
+            }
+        };
+
+        applyLang();
+    </script>
+</body>
+
+</html>
