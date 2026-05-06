@@ -777,6 +777,56 @@
         };
 
         applyLang();
+
+
+        document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  
+  const btn = e.target.querySelector('button')
+  const name = document.getElementById('name').value
+  const whatsapp = document.getElementById('whatsapp').value
+  const platform = document.getElementById('platform').value
+  
+  btn.disabled = true
+  btn.textContent = 'Creating...'
+  
+  // Save to Supabase
+  const { error } = await supabase
+    .from('waitlist')
+    .insert({ name, whatsapp, platform })
+  
+  if (error) {
+    alert('Error: ' + error.message)
+    btn.disabled = false
+    btn.textContent = 'Create free account'
+    return
+  }
+  
+  // Show thank you
+  document.getElementById('waitlist-form').innerHTML = `
+    <div style="text-align:center; padding:40px 20px">
+      <div style="font-size:48px; margin-bottom:16px">🎉</div>
+      <h2 style="font-size:24px; margin-bottom:8px">Welcome to RedAnt!</h2>
+      <p style="color:#666; margin-bottom:24px">
+        Check your WhatsApp in 30 seconds. 
+        I'm sending you setup instructions.
+      </p>
+      <div style="font-size:14px; color:#999">
+        - Karthik, Founder
+      </div>
+    </div>
+  `
+  
+  // Trigger WhatsApp (via Supabase function)
+  await fetch('https://zzkwuxzpuhvwcgueeyiw.supabase.co/functions/v1/send-welcome', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6a3d1eHpwdWh2d2NndWVleWl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwOTA1MTAsImV4cCI6MjA5MjY2NjUxMH0.H1fXjwVry0-ZDAdpSsBhR7B72t9Sq-Xopf_ZxLloaA0'
+    },
+    body: JSON.stringify({ name, whatsapp })
+  })
+})
     </script>
 </body>
 
